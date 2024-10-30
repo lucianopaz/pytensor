@@ -79,6 +79,7 @@ import functools
 import logging
 import os
 import time
+from pathlib import Path
 
 import numpy as np
 
@@ -425,7 +426,7 @@ def _ldflags(
 
         try:
             t0, t1 = t[0], t[1]
-            assert t0 == "-"
+            assert t0 == "-" or t == "Accelerate" or Path(t).exists()
         except Exception:
             raise ValueError(f'invalid token "{t}" in ldflags_str: "{ldflags_str}"')
         if libs_dir and t1 == "L":

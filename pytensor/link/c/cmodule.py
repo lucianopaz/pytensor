@@ -2874,8 +2874,20 @@ def default_blas_ldflags():
     except Exception as e:
         _logger.debug(e)
     try:
+        # 3. Mac Accelerate framework
+        _logger.debug("Checking Accelerate framework")
+        flags = ["-framework", "Accelerate"]
+        if rpath:
+            flags = [*flags, "-rpath", rpath]
+        validated_flags = try_blas_flag(flags)
+        if validated_flags == "":
+            raise Exception("Accelerate framework flag failed ")
+        return validated_flags
+    except Exception as e:
+        _logger.debug(e)
+    try:
         _logger.debug("Checking Lapack + blas")
-        # 3. Try to use LAPACK + BLAS
+        # 4. Try to use LAPACK + BLAS
         return check_libs(
             all_libs,
             required_libs=["lapack", "blas", "cblas", "m"],
@@ -2885,7 +2897,7 @@ def default_blas_ldflags():
     except Exception as e:
         _logger.debug(e)
     try:
-        # 4. Try to use BLAS alone
+        # 5. Try to use BLAS alone
         _logger.debug("Checking blas alone")
         return check_libs(
             all_libs,
@@ -2896,7 +2908,7 @@ def default_blas_ldflags():
     except Exception as e:
         _logger.debug(e)
     try:
-        # 5. Try to use openblas
+        # 6. Try to use openblas
         _logger.debug("Checking openblas")
         return check_libs(
             all_libs,
